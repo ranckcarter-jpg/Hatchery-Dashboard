@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="form-container">
+    <h2>{{ action }} Batch</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="breed">Breed</label>
+            <input type="text" name="breed" id="breed" value="{{ batch.breed if batch else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="hatch_date">Hatch Date</label>
+            <input type="date" name="hatch_date" id="hatch_date" value="{{ batch.hatch_date if batch else '' }}" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="hens">Hens</label>
+                <input type="number" name="hens" id="hens" value="{{ batch.hens if batch else 0 }}" min="0">
+            </div>
+            <div class="form-group">
+                <label for="roosters">Roosters</label>
+                <input type="number" name="roosters" id="roosters" value="{{ batch.roosters if batch else 0 }}" min="0">
+            </div>
+            <div class="form-group">
+                <label for="unsexed">Unsexed</label>
+                <input type="number" name="unsexed" id="unsexed" value="{{ batch.unsexed if batch else 0 }}" min="0">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="health_status">Health Status</label>
+            <select name="health_status" id="health_status">
+                <option value="Healthy" {% if batch and batch.health_status == 'Healthy' %}selected{% endif %}>Healthy</option>
+                <option value="Quarantine" {% if batch and batch.health_status == 'Quarantine' %}selected{% endif %}>Quarantine</option>
+                <option value="Sick" {% if batch and batch.health_status == 'Sick' %}selected{% endif %}>Sick</option>
+                <option value="Recovering" {% if batch and batch.health_status == 'Recovering' %}selected{% endif %}>Recovering</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="health_notes">Health Notes</label>
+            <textarea name="health_notes" id="health_notes" rows="2">{{ batch.health_notes if batch else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="notes">General Notes</label>
+            <textarea name="notes" id="notes" rows="2">{{ batch.notes if batch else '' }}</textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Batch</button>
+            <a href="{{ url_for('dashboard') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

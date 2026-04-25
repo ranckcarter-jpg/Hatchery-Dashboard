@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="today-view">
+    <h2>Today at the Hatchery</h2>
+    <div class="grid-2">
+        <div class="card">
+            <h3>✅ Daily Tasks</h3>
+            <ul class="task-list">
+                {% for task in tasks %}
+                <li class="task-item {% if task.completed %}completed{% endif %}">
+                    <a href="{{ url_for('toggle_task', id=task.id) }}" class="task-toggle">
+                        {% if task.completed %} [X] {% else %} [ ] {% endif %} {{ task.task_name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🌡️ Environment Log</h3>
+            <form action="{{ url_for('log_environment') }}" method="POST" class="inline-form">
+                <div class="form-row">
+                    <input type="number" step="0.1" name="temperature" placeholder="Temp °C" value="{{ env_log.temperature if env_log else '' }}" required>
+                    <input type="number" step="0.1" name="humidity" placeholder="Humidity %" value="{{ env_log.humidity if env_log else '' }}" required>
+                </div>
+                <textarea name="notes" placeholder="Daily notes...">{{ env_log.notes if env_log else '' }}</textarea>
+                <button type="submit" class="btn btn-primary btn-small">Update Log</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% if alerts %}
+<div class="alerts-section">
+    <h3>🔔 Alerts & Milestones</h3>
+    <ul>
+        {% for alert in alerts %}
+        <li class="alert-item">{{ alert }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Birds</h3>
+        <p class="stat-value">{{ total_birds }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Revenue</h3>
+        <p class="stat-value">${{ total_revenue }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Hens/Roosters</h3>
+        <p class="stat-value">{{ total_hens }}/{{ total_roosters }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Unsexed</h3>
+        <p class="stat-value">{{ total_unsexed }}</p>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="dashboard-header">
+        <h2>Active Batches</h2>
+        <a href="{{ url_for('add_batch') }}" class="btn btn-primary">+ New Batch</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Breed</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>H/R/U</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for batch in batches %}
+            <tr class="{% if batch.milestone %}milestone-row{% endif %}">
+                <td>{{ batch.id }}</td>
+                <td>
+                    {{ batch.breed }}
+                    {% if batch.milestone %}
+                    <span class="badge">{{ batch.milestone }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ batch.age }}</td>
+                <td><span class="tag-{{ batch.health_status|lower }}">{{ batch.health_status }}</span></td>
+                <td>{{ batch.hens }}/{{ batch.roosters }}/{{ batch.unsexed }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('edit_batch', id=batch.id) }}" class="btn-small">Edit</a>
+                    <a href="{{ url_for('batch_events', batch_id=batch.id) }}" class="btn-small">Log</a>
+                    <a href="{{ url_for('delete_batch', id=batch.id) }}" class="btn-small btn-danger" onclick="return confirm('Are you sure?')">Del</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

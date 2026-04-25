@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="form-container">
+    <h2>Complete Incubation #{{ batch.id }}</h2>
+    <p><strong>Breed:</strong> {{ batch.breed }}</p>
+    <p><strong>Eggs Started:</strong> {{ batch.egg_count }}</p>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="hatch_success">Number of Successful Hatches</label>
+            <input type="number" name="hatch_success" id="hatch_success" min="0" max="{{ batch.egg_count }}" required>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="create_batch" value="yes" checked>
+                Automatically create a new active batch from these chicks
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Mark Complete</button>
+            <a href="{{ url_for('incubation') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

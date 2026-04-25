@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Incubation Tracking</h1>
+    <a href="{{ url_for('add_incubation') }}" class="btn btn-primary">+ New Incubation</a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Breed</th>
+                <th>Expected Hatch</th>
+                <th>Lockdown</th>
+                <th>Eggs</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for batch in batches %}
+            <tr>
+                <td>{{ batch.id }}</td>
+                <td>{{ batch.breed }}</td>
+                <td>{{ batch.expected_hatch_date }}</td>
+                <td>{{ batch.lockdown_date }}</td>
+                <td>{{ batch.egg_count }}</td>
+                <td>
+                    {% if batch.hatch_success is not none %}
+                        ✅ {{ batch.hatch_success }} / {{ batch.egg_count }} ({{ (batch.hatch_success / batch.egg_count * 100)|round(1) }}%)
+                    {% else %}
+                        ⏳ Day {{ ((datetime.now().date() - datetime.strptime(batch.start_date, '%Y-%m-%d').date()).days) }}
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    {% if batch.hatch_success is none %}
+                    <button class="btn-small" onclick="document.getElementById('log-{{batch.id}}').style.display='block'">Log Env</button>
+                    <a href="{{ url_for('complete_incubation', id=batch.id) }}" class="btn-small">Complete</a>
+                    
+                    <div id="log-{{batch.id}}" class="modal" style="display:none;">
+                        <div class="modal-content">
+                            <h3>Log Incubation Env #{{batch.id}}</h3>
+                            <form action="{{ url_for('log_incubation_env', id=batch.id) }}" method="POST">
+                                <input type="number" step="0.1" name="temp" placeholder="Temp °C" required>
+                                <input type="number" step="0.1" name="humidity" placeholder="Humidity %" required>
+                                <button type="submit" class="btn btn-primary btn-small">Save</button>
+                                <button type="button" class="btn-small" onclick="this.parentElement.parentElement.parentElement.style.display='none'">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

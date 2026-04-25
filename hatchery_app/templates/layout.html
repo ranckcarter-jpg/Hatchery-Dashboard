@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatchery Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('dashboard') }}" class="brand">🐣 Hatchery Manager</a>
+            {% if session.user_id %}
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('incubation') }}">Incubation</a></li>
+                <li><a href="{{ url_for('inventory') }}">Inventory</a></li>
+                <li><a href="{{ url_for('analytics') }}">Analytics</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Chicken Hatchery Dashboard</p>
+            {% if session.user_id %}
+            <div class="footer-actions">
+                <a href="{{ url_for('backup') }}" class="btn-small">Download Backup</a>
+                <form action="{{ url_for('import_data') }}" method="POST" enctype="multipart/form-data" style="display:inline;">
+                    <input type="file" name="file" id="import-file" style="display:none;" onchange="this.form.submit()">
+                    <button type="button" class="btn-small" onclick="document.getElementById('import-file').click()">Import Backup</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </footer>
+</body>
+</html>

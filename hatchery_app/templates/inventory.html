@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Inventory Management</h1>
+</div>
+
+<div class="grid-2">
+    <div class="form-container">
+        <h3>Add/Update Item</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="item_name">Item Name</label>
+                <input type="text" name="item_name" id="item_name" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" name="quantity" id="quantity" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="unit">Unit</label>
+                    <input type="text" name="unit" id="unit" placeholder="kg, bags, etc.">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="low_threshold">Low Stock Threshold</label>
+                <input type="number" name="low_threshold" id="low_threshold" min="0" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Item</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <h3>Current Stock</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }} {{ item.unit }}</td>
+                    <td>
+                        {% if item.quantity <= item.low_threshold %}
+                        <span class="tag-sick">LOW STOCK</span>
+                        {% else %}
+                        <span class="tag-healthy">OK</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
